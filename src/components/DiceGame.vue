@@ -1,49 +1,59 @@
 <script setup>
-import { ref } from 'vue'
-import CustomBtn from './CustomBtn.vue'
-import HandLeft from './icons/HandLeft.vue'
-import HandRight from './icons/HandRight.vue'
+import { ref } from 'vue';
+import CustomBtn from './CustomBtn.vue';
+import HandLeft from './icons/HandLeft.vue';
+import HandRight from './icons/HandRight.vue';
+import confetti from 'canvas-confetti';
 
-const activePlayer = ref(0)
-const scores = ref([0, 0])
-const currentScore = ref([0, 0])
-const dice = ref(0)
-const winner = ref(null)
-const playing = ref(true)
+const activePlayer = ref(0);
+const scores = ref([0, 0]);
+const currentScore = ref([0, 0]);
+const dice = ref(0);
+const winner = ref(null);
+const playing = ref(true);
 
 const rollDice = () => {
   if (playing.value) {
-    dice.value = Math.floor(Math.random() * 6) + 1
+    dice.value = Math.floor(Math.random() * 6) + 1;
     if (dice.value !== 1) {
-      currentScore.value[activePlayer.value] += dice.value
+      currentScore.value[activePlayer.value] += dice.value;
     } else {
-      currentScore.value[activePlayer.value] = 0
-      activePlayer.value = activePlayer.value === 0 ? 1 : 0
+      currentScore.value[activePlayer.value] = 0;
+      activePlayer.value = activePlayer.value === 0 ? 1 : 0;
     }
   }
-}
+};
 
 const holdScore = () => {
   if (playing.value) {
-    scores.value[activePlayer.value] += currentScore.value[activePlayer.value]
-    if (scores.value[activePlayer.value] >= 20) {
-      winner.value = activePlayer.value
-      playing.value = false
+    scores.value[activePlayer.value] += currentScore.value[activePlayer.value];
+    if (scores.value[activePlayer.value] >= 100) {
+      winner.value = activePlayer.value;
+      playing.value = false;
+      launchConfetti();
     } else {
-      currentScore.value[activePlayer.value] = 0
-      activePlayer.value = activePlayer.value === 0 ? 1 : 0
+      currentScore.value[activePlayer.value] = 0;
+      activePlayer.value = activePlayer.value === 0 ? 1 : 0;
     }
   }
-}
+};
 
 const newGame = () => {
-  scores.value = [0, 0]
-  currentScore.value = [0, 0]
-  activePlayer.value = 0
-  winner.value = null
-  playing.value = true
-  dice.value = 0
-}
+  scores.value = [0, 0];
+  currentScore.value = [0, 0];
+  activePlayer.value = 0;
+  winner.value = null;
+  playing.value = true;
+  dice.value = 0;
+};
+
+const launchConfetti = () => {
+  confetti({
+    particleCount: 150,
+    spread: 70,
+    origin: { y: 0.6 }
+  });
+};
 </script>
 
 <template>
@@ -58,7 +68,9 @@ const newGame = () => {
     >
       <div class="flex flex-col items-center justify-start relative">
         <div class="details space-y-10 text-center absolute top-36 left-0 w-full uppercase">
-          <h5 class="text-5xl" :class="{ 'font-bold': activePlayer === 0 }">Player 1</h5>
+          <h5 class="text-5xl font-Cinzel" :class="{ 'font-bold': activePlayer === 0 }">
+            Player 1
+          </h5>
           <p class="text-3xl">Score : {{ scores[0] }}</p>
         </div>
         <div
@@ -83,7 +95,9 @@ const newGame = () => {
     >
       <div class="flex flex-col items-center justify-start relative">
         <div class="details space-y-10 text-center absolute top-36 left-0 w-full uppercase">
-          <h5 class="text-5xl" :class="{ 'font-bold': activePlayer === 1 }">Player 2</h5>
+          <h5 class="text-5xl font-Cinzel" :class="{ 'font-bold': activePlayer === 1 }">
+            Player 2
+          </h5>
           <p class="text-3xl">Score : {{ scores[1] }}</p>
         </div>
         <div
@@ -109,12 +123,14 @@ const newGame = () => {
     <div
       class="absolute top-60 left-1/2 -translate-x-1/2 -translate-y-1/2 flex flex-col justify-between mt-10 h-96 w-44"
     >
-      <CustomBtn @click="newGame" variant="fire">New Game</CustomBtn>
+      <CustomBtn @click="newGame" color="fire" :class="{ 'animate-bounce': winner !== null }"
+        >New Game</CustomBtn
+      >
       <div class="flex flex-col">
-        <CustomBtn @click="rollDice" :variant="winner !== null ? 'notEvent' : 'fire'" class="mb-4"
+        <CustomBtn @click="rollDice" :color="winner !== null ? 'notEvent' : 'fire'" class="mb-4"
           >Roll Dice</CustomBtn
         >
-        <CustomBtn @click="holdScore" :variant="winner !== null ? 'notEvent' : 'fire'"
+        <CustomBtn @click="holdScore" :color="winner !== null ? 'notEvent' : 'fire'"
           >Hold</CustomBtn
         >
       </div>
@@ -134,7 +150,7 @@ const newGame = () => {
         class="w-full h-screen absolute bottom-20 left-0 flex items-end justify-center pointer-events-none"
         v-if="winner !== null"
       >
-        <h3 class="text-4xl font-bold text-center uppercase">
+        <h3 class="text-4xl font-bold text-center uppercase animate-pulse">
           Player {{ winner + 1 }} Won !! 🤩🎉
         </h3>
       </div>

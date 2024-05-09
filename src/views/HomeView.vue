@@ -1,11 +1,11 @@
 <script setup>
-import { useRouter } from 'vue-router'
-import CustomBtn from '@/components/CustomBtn.vue'
+import { useRouter } from 'vue-router';
+import CustomBtn from '@/components/CustomBtn.vue';
 
-const router = useRouter()
+const router = useRouter();
 const startGame = () => {
-  router.push({ name: 'game' })
-}
+  router.push({ name: 'game' });
+};
 </script>
 
 <template>
@@ -32,7 +32,7 @@ const startGame = () => {
         </li>
         <li>The first player to reach 100 points wins the game.</li>
       </ul>
-      <CustomBtn @click="startGame" variant="secondary">let's start</CustomBtn>
+      <CustomBtn @click="startGame">let's start</CustomBtn>
     </div>
   </div>
 </template>

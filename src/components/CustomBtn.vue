@@ -5,42 +5,34 @@
 </template>
 
 <script setup>
-import { computed } from 'vue'
+import { computed } from 'vue';
 
 const props = defineProps({
-  variant: {
+  color: {
     type: String,
-    default: 'secondary'
-  },
-  class: {
-    type: String,
-    default: ''
+    default: 'default'
   }
-})
+});
 
-const emit = defineEmits(['click'])
+const emit = defineEmits(['click']);
 
 const handleClick = (event) => {
-  emit('click', event)
-}
+  emit('click', event);
+};
 
 const computedClasses = computed(() => {
-  return [
-    'mt-6',
-    'px-4',
-    'py-2',
-    `bg-${props.variant}`,
-    `hover:bg-${props.variant}-hover`,
-    'font-bold',
-    'rounded',
-    'font-Cinzel',
-    'transition-all',
-    'duration-150',
-    'ease-linear',
-    'active:translate-y-0.5',
-    props.class
-  ].join(' ')
-})
+  const baseClasses =
+    'mt-6 px-4 py-2 font-bold rounded font-Cinzel transition-all duration-150 ease-linear active:translate-y-0.5';
+  const colorClasses = {
+    default: 'bg-secondary hover:bg-heading',
+    fire: 'bg-fire hover:bg-fire/75',
+    notEvent: 'bg-notEvent hover:cursor-not-allowed'
+  };
+
+  const colorClass = colorClasses[props.color] || colorClasses.default;
+
+  return `${baseClasses} ${colorClass}`;
+});
 </script>
 
 <style scoped></style>

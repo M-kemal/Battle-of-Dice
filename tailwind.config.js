@@ -1,5 +1,6 @@
 /** @type {import('tailwindcss').Config} */
 export default {
+  mode: 'jit',
   content: ['./index.html', './src/**/*.{vue,js,ts,jsx,tsx}'],
   theme: {
     extend: {
@@ -7,6 +8,7 @@ export default {
         heading: '#ffa07a',
         secondary: '#e17449',
         fire: '#870000',
+        'fire-hover': '#680000',
         notEvent: '#190a05'
       },
       fontFamily: {
@@ -30,4 +32,4 @@ export default {
     }
   },
   plugins: []
-}
+};
