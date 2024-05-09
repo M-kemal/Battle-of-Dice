@@ -1,5 +1,6 @@
 <script setup>
 import { useRouter } from 'vue-router'
+import CustomBtn from '@/components/CustomBtn.vue'
 
 const router = useRouter()
 const startGame = () => {
@@ -31,12 +32,7 @@ const startGame = () => {
         </li>
         <li>The first player to reach 100 points wins the game.</li>
       </ul>
-      <button
-        @click="startGame"
-        class="mt-6 px-4 py-2 bg-secondary hover:bg-heading font-bold rounded font-Cinzel transition-all duration-150 ease-linear active:translate-y-0.5"
-      >
-        let's start
-      </button>
+      <CustomBtn @click="startGame" variant="secondary">let's start</CustomBtn>
     </div>
   </div>
 </template>

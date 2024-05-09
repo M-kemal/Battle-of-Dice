@@ -6,7 +6,8 @@ export default {
       colors: {
         heading: '#ffa07a',
         secondary: '#e17449',
-        fire: '#870000'
+        fire: '#870000',
+        notEvent: '#190a05'
       },
       fontFamily: {
         Cinzel: ['Cinzel Decorative', 'serif'],
