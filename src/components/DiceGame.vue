@@ -4,6 +4,9 @@ import CustomBtn from './CustomBtn.vue';
 import HandLeft from './icons/HandLeft.vue';
 import HandRight from './icons/HandRight.vue';
 import confetti from 'canvas-confetti';
+import NewgameIcon from './icons/NewgameIcon.vue';
+import DiceIcon from './icons/DiceIcon.vue';
+import HoldIcon from './icons/HoldIcon.vue';
 
 const activePlayer = ref(0);
 const scores = ref([0, 0]);
@@ -123,16 +126,32 @@ const launchConfetti = () => {
     <div
       class="absolute top-60 left-1/2 -translate-x-1/2 -translate-y-1/2 flex flex-col justify-between mt-10 h-96 w-44"
     >
-      <CustomBtn @click="newGame" color="fire" :class="{ 'animate-bounce': winner !== null }"
-        >New Game</CustomBtn
+      <CustomBtn
+        @click="newGame"
+        color="fire"
+        :class="{ 'animate-bounce': winner !== null }"
+        class="flex items-center justify-center"
       >
+        <span class="mr-2">New Game</span>
+        <NewgameIcon />
+      </CustomBtn>
       <div class="flex flex-col">
-        <CustomBtn @click="rollDice" :color="winner !== null ? 'notEvent' : 'fire'" class="mb-4"
-          >Roll Dice</CustomBtn
+        <CustomBtn
+          @click="rollDice"
+          :color="winner !== null ? 'notEvent' : 'fire'"
+          class="mb-4 flex items-center justify-center"
         >
-        <CustomBtn @click="holdScore" :color="winner !== null ? 'notEvent' : 'fire'"
-          >Hold</CustomBtn
+          <span class="mr-2">Roll Dice</span>
+          <DiceIcon />
+        </CustomBtn>
+        <CustomBtn
+          @click="holdScore"
+          :color="winner !== null ? 'notEvent' : 'fire'"
+          class="flex items-center justify-center"
         >
+          <span class="mr-2">Hold Score</span>
+          <HoldIcon />
+        </CustomBtn>
       </div>
     </div>
     <!-- Buttons End -->
@@ -141,6 +160,23 @@ const launchConfetti = () => {
     <div class="absolute top-10 left-1/2 -translate-x-1/2">
       <HandLeft v-if="activePlayer === 0" />
       <HandRight v-if="activePlayer === 1" />
+    </div>
+
+    <div>
+      <h5
+        class="text-xl font-Cinzel absolute bottom-32 left-[calc(50%-26rem)] flex flex-col items-center"
+        v-if="activePlayer === 0 && winner === null"
+      >
+        <span>Your turn</span>
+        <DiceIcon class="animate-spin" />
+      </h5>
+      <h5
+        class="text-xl font-Cinzel absolute bottom-32 right-[calc(50%-26rem)] flex flex-col items-center"
+        v-if="activePlayer === 1 && winner === null"
+      >
+        <span>Your turn</span>
+        <DiceIcon class="animate-spin" />
+      </h5>
     </div>
     <!-- Who is next? -->
 
