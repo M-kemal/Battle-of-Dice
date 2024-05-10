@@ -1,5 +1,5 @@
 <script setup>
-import { ref } from 'vue';
+import { ref, watch } from 'vue';
 import CustomBtn from './CustomBtn.vue';
 import HandLeft from './icons/HandLeft.vue';
 import HandRight from './icons/HandRight.vue';
@@ -15,6 +15,13 @@ import dice3 from '../assets/images/dice-3.png';
 import dice4 from '../assets/images/dice-4.png';
 import dice5 from '../assets/images/dice-5.png';
 import dice6 from '../assets/images/dice-6.png';
+import { useRoute, useRouter } from 'vue-router';
+
+const route = useRoute();
+const router = useRouter();
+const mode = ref(route.query.mode || 'multi');
+const player1Name = ref(route.query.player1 || 'Player 1');
+const player2Name = ref(route.query.player2 || (mode.value === 'single' ? 'Computer' : 'Player 2'));
 
 const activePlayer = ref(0);
 const scores = ref([0, 0]);
@@ -32,7 +39,8 @@ const rollDice = () => {
       currentScore.value[activePlayer.value] += dice.value;
     } else {
       currentScore.value[activePlayer.value] = 0;
-      activePlayer.value = activePlayer.value === 0 ? 1 : 0;
+      // activePlayer.value = activePlayer.value === 0 ? 1 : 0;
+      switchPlayer();
     }
   }
 };
@@ -46,8 +54,16 @@ const holdScore = () => {
       launchConfetti();
     } else {
       currentScore.value[activePlayer.value] = 0;
-      activePlayer.value = activePlayer.value === 0 ? 1 : 0;
+      // activePlayer.value = activePlayer.value === 0 ? 1 : 0;
+      switchPlayer();
     }
+  }
+};
+
+const switchPlayer = () => {
+  activePlayer.value = activePlayer.value === 0 ? 1 : 0;
+  if (mode.value === 'single' && activePlayer.value === 1) {
+    setTimeout(computerTurn, 1000);
   }
 };
 
@@ -58,7 +74,39 @@ const newGame = () => {
   winner.value = null;
   playing.value = true;
   dice.value = 0;
+  if (mode.value === 'single') {
+    setTimeout(computerTurn, 1000);
+  }
 };
+
+const computerTurn = () => {
+  let rolls = 0;
+  const minRolls = 1;
+  const maxRolls = 6;
+  const targetRolls = Math.floor(Math.random() * (maxRolls - minRolls + 1)) + minRolls;
+
+  const rollInterval = setInterval(() => {
+    if (!playing.value || winner.value !== null || activePlayer.value !== 1) {
+      clearInterval(rollInterval);
+      return;
+    }
+    rollDice();
+    rolls++;
+    if (dice.value === 1 || rolls >= targetRolls) {
+      if (dice.value !== 1) holdScore();
+      clearInterval(rollInterval);
+    }
+  }, 1000);
+};
+
+watch(
+  () => activePlayer.value,
+  (newValue) => {
+    if (mode.value === 'single' && newValue === 1 && playing.value) {
+      computerTurn();
+    }
+  }
+);
 
 const launchConfetti = () => {
   confetti({
@@ -71,6 +119,13 @@ const launchConfetti = () => {
 
 <template>
   <div class="w-full h-screen relative flex items-center justify-center p-6">
+    <!-- Home -->
+    <div class="absolute top-4 left-4">
+      <CustomBtn color="fire" @click="router.push({ name: 'home' })" class="shadow">
+        Back to Home
+      </CustomBtn>
+    </div>
+    <!-- Home -->
     <!-- Player 1 Start -->
     <div
       class="w-full h-full border border-transparent transition-colors duration-300 ease-linear"
@@ -82,9 +137,9 @@ const launchConfetti = () => {
       <div class="flex flex-col items-center justify-start relative">
         <div class="details space-y-10 text-center absolute top-36 left-0 w-full uppercase">
           <h5 class="text-5xl font-Cinzel" :class="{ 'font-bold': activePlayer === 0 }">
-            Player 1
+            {{ player1Name }}
           </h5>
-          <p class="text-3xl">Score : {{ scores[0] }}</p>
+          <p class="text-6xl">Score : {{ scores[0] }}</p>
         </div>
         <div
           class="currentScore absolute top-80 left-1/2 -translate-x-1/2 uppercase bg-transparent shadow-inner shadow-fire p-6 text-3xl text-center"
@@ -109,9 +164,9 @@ const launchConfetti = () => {
       <div class="flex flex-col items-center justify-start relative">
         <div class="details space-y-10 text-center absolute top-36 left-0 w-full uppercase">
           <h5 class="text-5xl font-Cinzel" :class="{ 'font-bold': activePlayer === 1 }">
-            Player 2
+            {{ player2Name }}
           </h5>
-          <p class="text-3xl">Score : {{ scores[1] }}</p>
+          <p class="text-6xl">Score : {{ scores[1] }}</p>
         </div>
         <div
           class="currentScore absolute top-80 left-1/2 -translate-x-1/2 uppercase bg-transparent shadow-inner shadow-fire p-6 text-3xl text-center"
@@ -143,7 +198,8 @@ const launchConfetti = () => {
       <div class="flex flex-col">
         <CustomBtn
           @click="rollDice"
-          :color="winner !== null ? 'notEvent' : 'fire'"
+          :color="activePlayer === 1 && mode === 'single' ? 'notEvent' : 'fire'"
+          :disabled="activePlayer === 1 && mode === 'single'"
           class="mb-4 flex items-center justify-center"
         >
           <span class="mr-2">Roll Dice</span>
@@ -151,7 +207,8 @@ const launchConfetti = () => {
         </CustomBtn>
         <CustomBtn
           @click="holdScore"
-          :color="winner !== null ? 'notEvent' : 'fire'"
+          :color="activePlayer === 1 && mode === 'single' ? 'notEvent' : 'fire'"
+          :disabled="activePlayer === 1 && mode === 'single'"
           class="flex items-center justify-center"
         >
           <span class="mr-2">Hold Score</span>
@@ -192,7 +249,7 @@ const launchConfetti = () => {
         v-if="winner !== null"
       >
         <h3 class="text-4xl font-bold text-center uppercase animate-pulse">
-          Player {{ winner + 1 }} Won !! 🤩🎉
+          {{ winner === 0 ? player1Name : player2Name }} Won !! 🤩🎉
         </h3>
       </div>
     </Transition>
