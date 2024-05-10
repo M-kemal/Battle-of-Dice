@@ -8,12 +8,22 @@ import NewgameIcon from './icons/NewgameIcon.vue';
 import DiceIcon from './icons/DiceIcon.vue';
 import HoldIcon from './icons/HoldIcon.vue';
 
+// Dice images
+import dice1 from '../assets/images/dice-1.png';
+import dice2 from '../assets/images/dice-2.png';
+import dice3 from '../assets/images/dice-3.png';
+import dice4 from '../assets/images/dice-4.png';
+import dice5 from '../assets/images/dice-5.png';
+import dice6 from '../assets/images/dice-6.png';
+
 const activePlayer = ref(0);
 const scores = ref([0, 0]);
 const currentScore = ref([0, 0]);
 const dice = ref(0);
 const winner = ref(null);
 const playing = ref(true);
+
+const diceImages = [null, dice1, dice2, dice3, dice4, dice5, dice6];
 
 const rollDice = () => {
   if (playing.value) {
@@ -114,12 +124,7 @@ const launchConfetti = () => {
     <!-- Player 2 End -->
     <!-- Dice Start -->
     <div class="absolute top-52 left-1/2 -translate-x-1/2">
-      <img
-        v-if="dice !== 0"
-        :src="`/dice-images/dice-${dice}.png`"
-        alt="dice"
-        class="w-24 h-24 object-cover"
-      />
+      <img v-if="dice !== 0" :src="diceImages[dice]" alt="dice" class="w-24 h-24 object-cover" />
     </div>
     <!-- Dice End -->
     <!-- Buttons Start -->
